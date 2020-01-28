@@ -34,7 +34,7 @@ RSpec.describe JsonWebToken do
       expect(result).to eql(HashWithIndifferentAccess.new({a:'string'}))
     end
 
-    it 'returns nil in case expection is raised' do
+    it 'returns nil in case exception is raised' do
       allow(JWT::Decode).to receive(:new) { RuntimeError }
       result = JsonWebToken.decode(token)
       expect(result).to be nil
