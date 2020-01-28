@@ -1,6 +1,4 @@
 require 'json_web_token'
-require 'jwt/encode'
-require 'jwt/decode'
 require 'rails'
 
 RSpec.describe JsonWebToken do
