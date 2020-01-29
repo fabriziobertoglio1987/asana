@@ -3,10 +3,6 @@ require 'rails_helper'
 RSpec.describe "Users::Registrations", type: :request do
   let(:valid_attributes) { { user: FactoryBot.attributes_for(:user) } }
   let(:invalid_attributes) { { user: { email: '', password: ''} } }
-  let(:user) { double("user") }
-  let(:email) { spy("email") }
-  let(:password) { double("password") }
-  let(:token) { double("token") }
 
   describe "#create" do
     context "with valid parameters" do

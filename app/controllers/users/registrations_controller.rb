@@ -2,8 +2,7 @@ class Users::RegistrationsController < ApplicationController
   def create
     user = User.create(user_params)
     if user.valid?
-      payload = {user_id: user.id}
-      token = encode(payload)
+      token = encode({ user_id: user.id })
       render json: {user: { email: user.email, token: token }}
     else
       render json: {errors: user.errors.full_messages}, status: :not_acceptable
@@ -11,11 +10,6 @@ class Users::RegistrationsController < ApplicationController
   end
 
   private
-  def encode(payload)
-    secret = Rails.application.secrets.secret_key_base
-    JWT.encode(payload, secret)
-  end
-
   def user_params
     params
       .require(:user)
