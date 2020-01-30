@@ -1,8 +1,13 @@
 class Api::V1::LocationsController < ApplicationController
   before_action :authenticate_user
 
-  def show
-    render status: 200
+  def index
+    location = Geocoder.search(params[:address]).first
+    if location
+      render json: { location: { latitude: location.data['lat'], longitude: location.data['lon'] }}, status: 200
+    else
+      render json: { errors: ['Location not found']}, status: 200
+    end
   end
   
   private 
