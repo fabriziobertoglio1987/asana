@@ -7,7 +7,7 @@ Rails.application.routes.draw do
         post 'registrations', to: 'registrations#create'
       end
 
-      get 'locations', to: 'locations#show'
+      get 'locations', to: 'locations#index'
     end
   end
 end
