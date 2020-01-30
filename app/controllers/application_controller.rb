@@ -5,17 +5,16 @@ class ApplicationController < ActionController::API
   end
 
   def encode(payload)
-    secret = Rails.application.secrets.secret_key_base
+    payload[:exp] = (Time.now + 12.hours).to_i
     JWT.encode(payload, secret)
   end
 
   def decode
-    secret = Rails.application.secrets.secret_key_base
-    token = auth_header.split(' ')[1]
-    begin 
-      JWT.decode(token, secret)
-    rescue JWT::DecodeError
-      []
-    end
+    JWT.decode(auth_header, secret)
+  end
+
+  private
+  def secret
+    Rails.application.secrets.secret_key_base
   end
 end
