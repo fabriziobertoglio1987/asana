@@ -5,10 +5,11 @@ RSpec.describe "Api::V1::LocationsController", type: :request do
 
   describe "GET /index" do
     context 'without authentication' do
-      it "returns status 500 (no token provided)" do
-        expect {
-          get "/api/v1/locations", params: { address: Faker::Address.full_address }
-        }.to raise_error(JWT::DecodeError)
+      it "returns status 401 Unauthorized" do
+        get "/api/v1/locations", params: { address: Faker::Address.full_address }
+        parsed_response = JSON.parse(response.body, symbolize_names: true)
+        expect(response.status).to be 401
+        expect(parsed_response[:errors].first).to eql "Unauthorized, Token invalid or expired"
       end
 
       it "returns expired token error" do
@@ -16,7 +17,7 @@ RSpec.describe "Api::V1::LocationsController", type: :request do
         get "/api/v1/locations", params: { address: Faker::Address.full_address }
         parsed_response = JSON.parse(response.body, symbolize_names: true)
         expect(response.status).to be 401
-        expect(parsed_response[:errors].first).to eql "Token expired, please login again"
+        expect(parsed_response[:errors].first).to eql "Unauthorized, Token invalid or expired"
       end
     end
 
@@ -24,20 +25,38 @@ RSpec.describe "Api::V1::LocationsController", type: :request do
       before(:each) do
         allow(JWT).to receive(:decode).and_return([{'user_id'=> user.id}])
         allow(User).to receive(:find_by).with(id: user.id) { user }
-        get "/api/v1/locations", params: { address: 'checkpoint charlie' }
-        @parsed_response = JSON.parse(response.body, symbolize_names: true)
       end
 
       it "returns http success" do
+        get "/api/v1/locations", params: { address: 'checkpoint charlie' }
+        @parsed_response = JSON.parse(response.body, symbolize_names: true)
         expect(response).to have_http_status(:success)
       end
 
       it "includes the latitude and longitude in the response" do
+        get "/api/v1/locations", params: { address: 'checkpoint charlie' }
+        @parsed_response = JSON.parse(response.body, symbolize_names: true)
         expect(@parsed_response[:location][:latitude]).to be_present
         expect(@parsed_response[:location][:longitude]).to be_present
       end
 
-      it "handles the erros in Geocoder"
+
+      it "handles the Geocoder limit request reached" do
+        allow(Geocoder).to receive(:search).with('') { raise Geocoder::OverQueryLimitError }
+        get "/api/v1/locations", params: { address: '' }
+        @parsed_response = JSON.parse(response.body, symbolize_names: true)
+        expect(response.status).to be 200
+        expect(@parsed_response[:errors].first).to eq "Geocoder API daily limit reached"
+      end
+
+      it "returns Location not found" do 
+        address = 'Impossible to fine location around the world'
+        allow(Geocoder).to receive(:search).with(address) { [] }
+        get "/api/v1/locations", params: { address: address }
+        @parsed_response = JSON.parse(response.body, symbolize_names: true)
+        expect(response.status).to be 404
+        expect(@parsed_response[:errors].first).to eq "Location not found"
+      end
     end
   end
 
