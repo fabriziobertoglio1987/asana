@@ -1,6 +1,6 @@
 class ApplicationController < ActionController::API
-  rescue_from JWT::ExpiredSignature,
-    :with => :render_expired_signature
+  rescue_from JWT::DecodeError,
+    :with => :render_unauthorized
 
   protected
   def auth_header
@@ -16,11 +16,11 @@ class ApplicationController < ActionController::API
     JWT.decode(auth_header, secret)
   end
 
-  private
-  def render_expired_signature
-    render json: { errors: ["Token expired, please login again"]}, status: 401
+  def render_unauthorized
+    render json: { errors: ["Unauthorized, Token invalid or expired"] }, status: 401
   end
 
+  private
   def secret
     Rails.application.secrets.secret_key_base
   end
