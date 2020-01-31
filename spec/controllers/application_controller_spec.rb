@@ -14,6 +14,7 @@ describe ApplicationController do
   describe '#decode' do 
     it 'returns the decoded token' do 
       allow(JWT::Decode).to receive_message_chain(:new, :decode_segments) { decoded_token }
+      allow(controller).to receive(:secret) { secret }
       expect(subject.send(:decode)).to be(decoded_token)
       expect(JWT::Decode).to have_received(:new).with(encoded_token, secret, any_args)
     end
