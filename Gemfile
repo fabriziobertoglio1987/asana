@@ -32,8 +32,6 @@ group :development, :test do
   gem 'rspec-rails', '~> 4.0.0.beta'
   gem 'factory_bot_rails'
   gem 'faker'
-  gem 'spring'
-  gem 'spring-watcher-listen', '~> 2.0.0'
   gem 'spring-commands-rspec'
 end
 
