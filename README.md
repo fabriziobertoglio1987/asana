@@ -89,16 +89,23 @@ ruby version `ruby 2.6.5`
 
 rails `6.0.0`
 
-Installation
+Include the following environment variables in your `~/.bash_profile` or `~/.zshrc` (depending on the terminal you use):
+```
+export SECRET_KEY="1a50650399a031cd088b06742108adf1"
+export ASANA_DATABASE_PASSWORD="yourProductionPassword"
+```
+You can now install the project
 
-```ruby
+```
+source ~/.bash_profile
+source ~/.zshrc
 git clone git@github.com:fabriziobertoglio1987/asana.git
 cd asana
 bundle install
 rails db:setup
 ```
 
-run `rspec` for running test suite.
-run `rails s` and test with [postman][6] request on your local environment.
+Run `rspec` to run the test suite.  
+Run `rails s` and test with [postman][6] request on your local environment.
 
 [6]: https://documenter.getpostman.com/view/6379421/SWTD7bjv?version=latest#intro
