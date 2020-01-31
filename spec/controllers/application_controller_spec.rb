@@ -17,10 +17,5 @@ describe ApplicationController do
       expect(subject.send(:decode)).to be(decoded_token)
       expect(JWT::Decode).to have_received(:new).with(encoded_token, secret, any_args)
     end
-
-    it 'returns empty array in case exception is raised' do
-      allow(JWT::Decode).to receive_message_chain(:new, :decode_segments) { raise JWT::DecodeError }
-      expect(subject.send(:decode)).to eql []
-    end
   end
 end
