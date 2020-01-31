@@ -8,7 +8,7 @@ class ApplicationController < ActionController::API
   end
 
   def encode(payload)
-    payload[:exp] = Time.now.to_i # (Time.now + 12.hours).to_i
+    payload[:exp] = (Time.now + 12.hours).to_i
     JWT.encode(payload, secret)
   end
 
